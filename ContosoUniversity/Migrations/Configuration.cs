@@ -63,7 +63,88 @@ namespace ContosoUniversity.Migrations
                 p => p.Title, s));
             context.SaveChanges();
 
-
+            var enrollments = new List<Enrollment>
+            {
+                new Enrollment {StudentID = students.Single(s => s.LastName == 
+                    "Alexander").ID, CourseID = courses.Single(c => c.Title == 
+                    "Chemistry").CourseID, Grade = Grade.A},
+                new Enrollment {StudentID = students.Single(s => s.LastName == 
+                    "Alexander").ID, CourseID = courses.Single(c => c.Title == 
+                    "Microeconomics").CourseID, Grade = Grade.C},
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Alexander").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Macroeconomics" ).CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Alonso").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Calculus" ).CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Alonso").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Trigonometry" ).CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Alonso").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Composition" ).CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Anand").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Chemistry" ).CourseID
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Anand").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Microeconomics").CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                    StudentID = students.Single(s => s.LastName ==
+                "Barzdukas").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Chemistry").CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Li").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Composition").CourseID,
+                Grade = Grade.B
+                },
+                new Enrollment {
+                StudentID = students.Single(s => s.LastName ==
+                "Justice").ID,
+                CourseID = courses.Single(c => c.Title ==
+                "Literature").CourseID,
+                Grade = Grade.B
+                }
+            };
+            foreach (Enrollment e in enrollments)
+            {
+                var enrollmentInDatabase = context.Enrollments.Where(s =>
+                    s.Student.ID == e.StudentID &&
+                    s.Course.CourseID == e.CourseID).SingleOrDefault();
+                if (enrollmentInDatabase == null)
+                {
+                    context.Enrollments.Add(e);
+                }
+            }
+            context.SaveChanges();
         }
     }
 }
