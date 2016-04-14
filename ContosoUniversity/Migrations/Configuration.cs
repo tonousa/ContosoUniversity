@@ -94,7 +94,7 @@ namespace ContosoUniversity.Migrations
             {
             new Course {CourseID = 1050, Title = "Chemistry",
             Credits = 3, 
-            DepartmentID = departments.Single(s => s.Name == "Enginering").DepartmentID, 
+            DepartmentID = departments.Single(s => s.Name == "Engineering").DepartmentID, 
             Instructors = new List<Instructor>()},
             new Course {CourseID = 4022, Title = "Microeconomics",
             Credits = 3, 
