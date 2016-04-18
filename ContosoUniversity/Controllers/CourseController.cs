@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using ContosoUniversity.Models;
 using ContosoUniversity.DAL;
+using System.Data.Entity.Infrastructure;
 
 namespace ContosoUniversity.Controllers
 {
@@ -40,8 +41,18 @@ namespace ContosoUniversity.Controllers
         // GET: /Course/Create
         public ActionResult Create()
         {
-            ViewBag.DepartmentID = new SelectList(db.Deparments, "DepartmentID", "Name");
+            PopulateDepartmentsDropDownList();
             return View();
+        }
+
+        private void PopulateDepartmentsDropDownList(object selectedDepartment = null)
+        {
+            //throw new NotImplementedException();
+            var departmentsQuery = from d in db.Deparments
+                                  orderby d.Name
+                                  select d;
+            ViewBag.DepartmentID = new SelectList(departmentsQuery, "DepartmentID",
+                "Name", selectedDepartment);
         }
 
         // POST: /Course/Create
@@ -49,16 +60,23 @@ namespace ContosoUniversity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="CourseID,Title,Credits,DepartmentID")] Course course)
+        public ActionResult Create([Bind(Include = 
+            "CourseID, Title, Credits, DepartmentID")] Course course)
         {
-            if (ModelState.IsValid)
+            try
             {
-                db.Courses.Add(course);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Courses.Add(course);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
-
-            ViewBag.DepartmentID = new SelectList(db.Deparments, "DepartmentID", "Name", course.DepartmentID);
+            catch (RetryLimitExceededException)
+            {
+                ModelState.AddModelError("", "Unable to save changes");
+            }
+            PopulateDepartmentsDropDownList(course.DepartmentID);
             return View(course);
         }
 
@@ -74,7 +92,7 @@ namespace ContosoUniversity.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.DepartmentID = new SelectList(db.Deparments, "DepartmentID", "Name", course.DepartmentID);
+            PopulateDepartmentsDropDownList(course.DepartmentID);
             return View(course);
         }
 
@@ -83,15 +101,23 @@ namespace ContosoUniversity.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="CourseID,Title,Credits,DepartmentID")] Course course)
+        public ActionResult Edit([Bind(Include=
+            "CourseID, Title, Credits, DepartmentID")] Course course)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(course).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.DepartmentID = new SelectList(db.Deparments, "DepartmentID", "Name", course.DepartmentID);
+            try 
+	        {	        
+		        if (ModelState.IsValid)
+	            {
+		            db.Entry(course).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+	            }
+	        }
+	        catch (RetryLimitExceededException)
+	        {
+                ModelState.AddModelError("", "Unable to save changes.");
+	        }
+            PopulateDepartmentsDropDownList(course.DepartmentID);
             return View(course);
         }
 
