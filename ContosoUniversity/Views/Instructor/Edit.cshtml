@@ -68,11 +68,11 @@
                                            name="selectedCourses" 
                                            value="@course.CourseID" 
                                            @(Html.Raw(course.Assigned ? "checked=\"checked\"" : "")) />
-                                        @course.CourseID 
-                                </td>
+                                        @course.CourseID @: @course.Title
+                                @:</td>
                             }
+                            @:</tr>
                         }
-                    </tr>
                 </table>
             </div>
         </div>
